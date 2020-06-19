@@ -29,7 +29,8 @@ I sometimes need to inject packages into Debian docker images that don't have an
 3. Get a recursive list of packages URLs:
 
     ```
-    SRC_URL='http://deb.debian.org/debian/' ./rec-deps smbclient >pkg_urls
+    PACKAGE=smbclient    # Set this to your desired package
+    SRC_URL='http://deb.debian.org/debian/' ./rec-deps $PACKAGE >pkg_urls
     ```
 
 4. Download all the packages:
@@ -42,7 +43,7 @@ I sometimes need to inject packages into Debian docker images that don't have an
 5. Create a bundle:
 
     ```
-    tar czf smbclient_debs.tar.gz debs/
+    tar czf ${PACKAGE}_debs.tar.gz debs/
     ```
 
 6. Copy the bundle to your target system.
