@@ -10,8 +10,8 @@ I sometimes need to inject packages into Debian docker images that don't have an
 
     cat /etc/apt/sources.list
 
-You'll see something like `deb http://deb.debian.org/debian/ stretch main`.
-Put the URL piece (`http://deb.debian.org/debian/`) into your web browser and navigate to your architecture's URL... something like:
+  You'll see something like `deb http://deb.debian.org/debian/ stretch main`.
+  Put the URL piece (`http://deb.debian.org/debian/`) into your web browser and navigate to your architecture's URL... something like:
 
     http://deb.debian.org/debian/dists/stretch/main/binary-amd64/
 
