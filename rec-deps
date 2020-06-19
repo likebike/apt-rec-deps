@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+
+
+#### Example Package entry:
+# 
+# Package: smbclient
+# Source: samba
+# Version: 2:4.5.16+dfsg-1+deb9u2
+# Installed-Size: 1461
+# Maintainer: Debian Samba Maintainers <pkg-samba-maint@lists.alioth.debian.org>
+# Architecture: amd64
+# Replaces: samba (<< 2.999+3.0.alpha21-4), samba-doc (<< 2:4.0.5~), samba4-clients (<< 4.0.5), smbget
+# Provides: samba-client
+# Depends: samba-common (= 2:4.5.16+dfsg-1+deb9u2), libarchive13 (>= 3.0.4), libbsd0 (>= 0.0), libc6 (>= 2.14), libpopt0 (>= 1.14), libreadline7 (>= 6.0), libsmbclient (>= 2:4.0.3+dfsg1), libtalloc2 (>= 2.0.4~git20101213), libtevent0 (>= 0.9.9), libwbclient0 (= 2:4.5.16+dfsg-1+deb9u2), samba-libs (= 2:4.5.16+dfsg-1+deb9u2)
+# Pre-Depends: dpkg (>= 1.15.6~)
+# Suggests: cifs-utils, heimdal-clients
+# Conflicts: samba-doc (<< 2:4.0.5~), samba4-clients (<< 4.0.5)
+# Description: command-line SMB/CIFS clients for Unix
+# Homepage: http://www.samba.org
+# Description-md5: 476018eed30b7f1e76b02afe22aaf008
+# Tag: implemented-in::c, interface::commandline, interface::text-mode,
+#  network::client, protocol::smb, role::program, suite::samba,
+#  uitoolkit::ncurses, use::browsing
+# Section: net
+# Priority: optional
+# Filename: pool/main/s/samba/smbclient_4.5.16+dfsg-1+deb9u2_amd64.deb
+# Size: 410430
+# MD5sum: c0a096b9fb53b3efd8c1054134d22feb
+# SHA256: 7c8500a1c9022baf693cdba89e503dbba75b1a245d79b369cac7f726c15595cd
+
+
+import sys, os
+
+PACKAGE=sys.argv[1]  # example: smbclient
+
+pkg='???'
+deps_map={}
+files={}
+for line in open('Packages'):
+    fields=line.split()
+    #print(fields)
+    if len(fields)<2: continue
+
+    if fields[0]=='Package:': pkg=fields[1]
+
+    if fields[0]=='Depends:':
+        deps_map[pkg] = [x.split()[0] for x in ' '.join(fields[1:]).split(', ')]
+
+    if fields[0]=='Filename:':
+        assert(len(fields)==2)
+        files[pkg] = fields[1]
+
+def rec_deps(pkg): return sorted(_rec_deps(pkg, []))
+def _rec_deps(pkg, dstlist):
+    for dep in deps_map.get(pkg,[]):
+        if dep in dstlist: continue
+        dstlist.append(dep)
+        _rec_deps(dep, dstlist)
+    return dstlist
+
+deps_lst=rec_deps(PACKAGE)
+if os.environ.get('ONLY_DEPS','0')!='0':
+    print('\n'.join(deps_lst))
+    sys.exit(0)
+
+SRC_URL=os.environ['SRC_URL']  # From /etc/apt/sources.list, example: http://us.archive.ubuntu.com/ubuntu/
+for pkg in deps_lst+[PACKAGE]:
+    if pkg not in files: continue
+    print(os.path.join(SRC_URL,files[pkg]))
+
